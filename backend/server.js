@@ -8,15 +8,32 @@ const taskRoutes = require("./routs/Taskroute.js");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middlewares
-app.use(cors());
+// ✅ Allowed frontend domain (Vercel)
+const allowedOrigins = ["https://task-management-frontend-rho-ruddy.vercel.app"];
+
+// ✅ CORS middleware with specific origin
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
+
+// ✅ JSON body parser
 app.use(express.json());
 
-// Routes
+// ✅ API routes
 app.use("/api/tasks", taskRoutes);
 
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI)
+// ✅ MongoDB connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 .then(() => {
   console.log("MongoDB connected");
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
