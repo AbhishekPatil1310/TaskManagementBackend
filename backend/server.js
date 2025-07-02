@@ -8,10 +8,20 @@ const taskRoutes = require("./routs/Taskroute.js");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ Allowed frontend domain (Vercel)
-app.use(cors({ origin: true, credentials: true }));
+const isProduction = process.env.NODE_ENV === 'production';
+const allowedOrigins = isProduction
+  ? [
+      'https://task-management-frontend-9nbxv94ue-abhisheks-projects-680a2fd9.vercel.app',
+      'https://task-management-frontend-9nbxv94ue-abhisheks-projects-680a2fd9.vercel.app',
+    ]
+  : ['http://localhost:5173'];
 
-
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 
 // ✅ JSON body parser
 app.use(express.json());
